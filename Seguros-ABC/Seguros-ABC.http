@@ -1,0 +1,6 @@
+@Seguros_ABC_HostAddress = http://localhost:5003
+
+GET {{Seguros_ABC_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
