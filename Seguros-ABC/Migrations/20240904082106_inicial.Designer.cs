@@ -12,8 +12,8 @@ using Seguros_ABC.Context;
 namespace Seguros_ABC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240904075838_initial")]
-    partial class initial
+    [Migration("20240904082106_inicial")]
+    partial class inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,8 +37,8 @@ namespace Seguros_ABC.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("FechaNacimiento")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("FechaNacimiento")
+                        .HasColumnType("date");
 
                     b.Property<string>("Observaciones")
                         .HasColumnType("nvarchar(max)");

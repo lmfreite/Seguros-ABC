@@ -28,7 +28,7 @@ namespace Seguros_ABC.Models
         public required string Email { get; set; }
 
 
-        public required DateTime FechaNacimiento { get; set; }
+        public required DateOnly FechaNacimiento { get; set; }
 
         [DataType(DataType.Currency)]
         [Column(TypeName = "decimal(18, 2)")]

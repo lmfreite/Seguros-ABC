@@ -34,8 +34,8 @@ namespace Seguros_ABC.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("FechaNacimiento")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("FechaNacimiento")
+                        .HasColumnType("date");
 
                     b.Property<string>("Observaciones")
                         .HasColumnType("nvarchar(max)");
