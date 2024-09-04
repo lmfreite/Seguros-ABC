@@ -7,5 +7,6 @@ namespace Seguros_ABC.Context
     {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
         public DbSet<Asegurado> Asegurados { get; set; }
+
     }
 }

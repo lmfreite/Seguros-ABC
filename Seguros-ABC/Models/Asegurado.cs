@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Seguros_ABC.Models
 {
@@ -30,6 +31,7 @@ namespace Seguros_ABC.Models
         public required DateTime FechaNacimiento { get; set; }
 
         [DataType(DataType.Currency)]
+        [Column(TypeName = "decimal(18, 2)")]
         public required decimal ValorEstimadoSeguro { get; set; }
 
         public string? Observaciones { get; set; }
