@@ -1,6 +1,16 @@
+using Microsoft.EntityFrameworkCore;
+using Seguros_ABC.Context;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+//variable para la cadena de conexion
+var connectionString = builder.Configuration.GetConnectionString("Connection");
+
+//registra el servicio para la conexion
+builder.Services.AddDbContext<AppDbContext>(options =>options.UseSqlServer(connectionString));
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
