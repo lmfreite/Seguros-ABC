@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Seguros_ABC.Context;
 using Seguros_ABC.Models;
@@ -25,7 +20,12 @@ namespace Seguros_ABC.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Asegurado>>> GetAsegurados()
         {
-            return await _context.Asegurados.ToListAsync();
+            var asegurados = await _context.Asegurados.ToListAsync();
+            if (!asegurados.Any())
+            {
+                return NotFound(new { message = "No hay registros en la BD." });
+            }
+            return asegurados;
         }
 
         // GET: api/Asegurado/5
@@ -91,7 +91,7 @@ namespace Seguros_ABC.Controllers
             var asegurado = await _context.Asegurados.FindAsync(id);
             if (asegurado == null)
             {
-                return NotFound();
+                return NotFound(new { message = $"Asegurado con ID {id} no encontrado." });
             }
 
             _context.Asegurados.Remove(asegurado);
