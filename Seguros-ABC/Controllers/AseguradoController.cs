@@ -18,28 +18,57 @@ namespace Seguros_ABC.Controllers
 
         // GET: api/Asegurado
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Asegurado>>> GetAsegurados()
+        public async Task<ActionResult<IEnumerable<Asegurado>>> GetAsegurados(
+            [FromQuery] string sortBy = "PrimerNombre",
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
         {
-            var asegurados = await _context.Asegurados.ToListAsync();
-            if (!asegurados.Any())
+            try
             {
-                return NotFound(new { message = "No hay registros en la BD." });
+                if (page <= 0 || pageSize <= 0)
+                {
+                    return BadRequest("La página y el tamaño de página deben ser mayores a cero.");
+                }
+
+                var asegurados = await _context.Asegurados
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                if (!asegurados.Any())
+                {
+                    return NotFound(new { message = "No hay registros en la BD." });
+                }
+
+                return asegurados;
             }
-            return asegurados;
+            catch (Exception ex)
+            {
+                // Manejar cualquier excepción que pueda ocurrir
+                return StatusCode(500, new { message = $"Ocurrió un error al listar los asegurados. Por favor, intente nuevamente más tarde. {ex.Message}" });
+            }
         }
 
         // GET: api/Asegurado/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Asegurado>> GetAsegurado(int id)
         {
-            var asegurado = await _context.Asegurados.FindAsync(id);
-
-            if (asegurado == null)
+            try
             {
-                return NotFound(new { message = $"Asegurado con ID {id} no encontrado." });
-            }
+                var asegurado = await _context.Asegurados.FindAsync(id);
 
-            return asegurado;
+                if (asegurado == null)
+                {
+                    return NotFound(new { message = $"Asegurado con ID {id} no encontrado." });
+                }
+
+                return asegurado;
+            }
+            catch (Exception ex)
+            {
+                // Manejar cualquier excepción que pueda ocurrir
+                return StatusCode(500, new { message = $"Ocurrió un error al listar el asegurado. Por favor, intente nuevamente más tarde. {ex.Message}" });
+            }
         }
 
         // PUT: api/Asegurado/5
@@ -47,30 +76,38 @@ namespace Seguros_ABC.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAsegurado(int id, Asegurado asegurado)
         {
-            if (id != asegurado.NumeroIdentificacion)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(asegurado).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AseguradoExists(id))
+                if (id != asegurado.NumeroIdentificacion)
                 {
-                    return NotFound();
+                    return BadRequest();
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                _context.Entry(asegurado).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!AseguradoExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                // Manejar cualquier excepción que pueda ocurrir
+                return StatusCode(500, new { message = $"Ocurrió un error al modificar el asegurado. Por favor, intente nuevamente más tarde. {ex.Message}" });
+            }
         }
 
         // POST: api/Asegurado
@@ -78,26 +115,50 @@ namespace Seguros_ABC.Controllers
         [HttpPost]
         public async Task<ActionResult<Asegurado>> PostAsegurado(Asegurado asegurado)
         {
-            _context.Asegurados.Add(asegurado);
-            await _context.SaveChangesAsync();
+            try
+            {
+                // Verificar si el asegurado ya existe en la BD
+                var aseguradoExistente = await _context.Asegurados.FirstOrDefaultAsync(a => a.NumeroIdentificacion == asegurado.NumeroIdentificacion);
 
-            return CreatedAtAction("GetAsegurado", new { id = asegurado.NumeroIdentificacion }, asegurado);
+                if (aseguradoExistente != null)
+                {
+                    return BadRequest(new { message = "El asegurado ya está registrado." });
+                }
+
+                _context.Asegurados.Add(asegurado);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = $"Asegurado {asegurado.PrimerNombre} {asegurado.PrimerApellido} registrado con éxito." });
+            }
+            catch (Exception ex)
+            {
+                // Manejar cualquier excepción que pueda ocurrir
+                return StatusCode(500, new { message = $"Ocurrió un error al registrar el asegurado. Por favor, intente nuevamente más tarde. {ex.Message}" });
+            }
         }
 
         // DELETE: api/Asegurado/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsegurado(int id)
         {
-            var asegurado = await _context.Asegurados.FindAsync(id);
-            if (asegurado == null)
+            try
             {
-                return NotFound(new { message = $"Asegurado con ID {id} no encontrado." });
+                var asegurado = await _context.Asegurados.FindAsync(id);
+                if (asegurado == null)
+                {
+                    return NotFound(new { message = $"Asegurado con ID {id} no encontrado." });
+                }
+
+                _context.Asegurados.Remove(asegurado);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = $"Asegurado con ID {id} eliminado con éxito." });
             }
-
-            _context.Asegurados.Remove(asegurado);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                // Manejar cualquier excepción que pueda ocurrir
+                return StatusCode(500, new { message = $"Ocurrió un error al eliminar el asegurado. Por favor, intente nuevamente más tarde. {ex.Message}" });
+            }
         }
 
         private bool AseguradoExists(int id)
