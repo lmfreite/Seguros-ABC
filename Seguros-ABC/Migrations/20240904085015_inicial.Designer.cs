@@ -12,7 +12,7 @@ using Seguros_ABC.Context;
 namespace Seguros_ABC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240904083136_inicial")]
+    [Migration("20240904085015_inicial")]
     partial class inicial
     {
         /// <inheritdoc />

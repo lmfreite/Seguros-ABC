@@ -36,7 +36,7 @@ namespace Seguros_ABC.Controllers
 
             if (asegurado == null)
             {
-                return NotFound();
+                return NotFound(new { message = $"Asegurado con ID {id} no encontrado." });
             }
 
             return asegurado;
