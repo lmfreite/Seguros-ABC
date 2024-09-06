@@ -14,7 +14,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins", policy =>
     {
-        policy.WithOrigins("https://segurosabc.netlify.app")
+        policy.WithOrigins("https://segurosabc.netlify.app", "http://localhost:4200")
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
