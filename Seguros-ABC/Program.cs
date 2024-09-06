@@ -3,30 +3,43 @@ using Seguros_ABC.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-//variable para la cadena de conexion
+// Variable para la cadena de conexión
 var connectionString = builder.Configuration.GetConnectionString("Connection");
 
-//registra el servicio para la conexion
-builder.Services.AddDbContext<AppDbContext>(options =>options.UseSqlServer(connectionString));
+// Registrar el servicio para la conexión
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
 
+// Configurar CORS para permitir las URLs específicas
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigins", policy =>
+    {
+        policy.WithOrigins("https://segurosabc.netlify.app")
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+// Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure el pipeline HTTP
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// Habilitar HTTPS
 app.UseHttpsRedirection();
+
+// Aplicar la política de CORS
+app.UseCors("AllowSpecificOrigins");
 
 app.UseAuthorization();
 

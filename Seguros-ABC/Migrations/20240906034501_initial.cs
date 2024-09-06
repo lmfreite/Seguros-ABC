@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Seguros_ABC.Migrations
 {
     /// <inheritdoc />
-    public partial class inicial : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,7 +15,8 @@ namespace Seguros_ABC.Migrations
                 name: "Asegurados",
                 columns: table => new
                 {
-                    NumeroIdentificacion = table.Column<int>(type: "int", nullable: false),
+                    NumeroIdentificacion = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     PrimerNombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SegundoNombre = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PrimerApellido = table.Column<string>(type: "nvarchar(max)", nullable: false),
